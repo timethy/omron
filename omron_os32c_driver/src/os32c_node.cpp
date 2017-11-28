@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
   try
   {
     os32c.startUDPIO();
-      os32c.sendMeasurementReportConfigUDP();
+    os32c.sendMeasurementReportConfigUDP();
   }
   catch (std::logic_error ex)
   {

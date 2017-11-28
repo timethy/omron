@@ -226,9 +226,9 @@ void OS32C::convertToLaserScan(const MeasurementReport& mr, sensor_msgs::LaserSc
     else
     {
       if (mr.header.range_report_format == RANGE_MEASURE_TOF_4PS) {
-        const static float METER_PER_4PS = 0.001199;
+        double static METER_PER_4PS = 0.00119916983;
         const EIP_UINT tof = mr.measurement_data[i]; // x 4ps
-        ls->ranges[i] = METER_PER_4PS * tof;
+        ls->ranges[i] = static_cast<float>(METER_PER_4PS * tof);
       } else
       {
         ls->ranges[i] = mr.measurement_data[i] / 1000.0f;
@@ -276,7 +276,7 @@ void OS32C::startUDPIO()
   o_to_t.rpi = 0x00177FA0;
   t_to_o.assembly_id = 0x66;
   t_to_o.buffer_size = 0x0584;
-  t_to_o.rpi = 0x00013070;
+  t_to_o.rpi = 40000; //0x00013070;
 
   connection_num_ = createConnection(o_to_t, t_to_o);
 }
