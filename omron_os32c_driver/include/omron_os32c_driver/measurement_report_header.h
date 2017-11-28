@@ -62,7 +62,7 @@ public:
   EIP_UINT non_safety_config_checksum;
   EIP_UINT safety_config_checksum;
   EIP_UINT range_report_format;
-  EIP_UINT refletivity_report_format;
+  EIP_UINT reflectivity_report_format;
   EIP_UINT num_beams;
 
   /**
@@ -103,7 +103,7 @@ public:
     writer.write(reserved);
     writer.write(reserved);
     writer.write(range_report_format);
-    writer.write(refletivity_report_format);
+    writer.write(reflectivity_report_format);
     writer.write(reserved);
     writer.write(num_beams);
     return writer;
@@ -142,7 +142,7 @@ public:
     reader.read(safety_config_checksum);
     reader.skip(6*sizeof(EIP_UINT));
     reader.read(range_report_format);
-    reader.read(refletivity_report_format);
+    reader.read(reflectivity_report_format);
     reader.skip(sizeof(EIP_UINT));
     reader.read(num_beams);
     return reader;

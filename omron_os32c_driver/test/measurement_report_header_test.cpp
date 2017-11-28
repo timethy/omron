@@ -106,7 +106,7 @@ TEST_F(MeasurementReportHeaderTest, test_deserialize)
   EXPECT_EQ(0x55AA, mrh.non_safety_config_checksum);
   EXPECT_EQ(0x5AA5, mrh.safety_config_checksum);
   EXPECT_EQ(1, mrh.range_report_format);
-  EXPECT_EQ(1, mrh.refletivity_report_format);
+  EXPECT_EQ(1, mrh.reflectivity_report_format);
   EXPECT_EQ(677, mrh.num_beams);
 }
 
@@ -128,7 +128,7 @@ TEST_F(MeasurementReportHeaderTest, test_serialize)
   mrh.non_safety_config_checksum = 0x55AA;
   mrh.safety_config_checksum = 0x5AA5;
   mrh.range_report_format = 1;
-  mrh.refletivity_report_format = 1;
+  mrh.reflectivity_report_format = 1;
   mrh.num_beams = 677;
 
   EIP_BYTE d[56];
@@ -214,7 +214,7 @@ TEST_F(MeasurementReportHeaderTest, test_serialize_and_deserialize)
   mrh.non_safety_config_checksum = 0x55AA;
   mrh.safety_config_checksum = 0x5AA5;
   mrh.range_report_format = 1;
-  mrh.refletivity_report_format = 1;
+  mrh.reflectivity_report_format = 1;
   mrh.num_beams = 677;
 
   EIP_BYTE d[56];
@@ -243,6 +243,6 @@ TEST_F(MeasurementReportHeaderTest, test_serialize_and_deserialize)
   EXPECT_EQ(0x55AA, mrh2.non_safety_config_checksum);
   EXPECT_EQ(0x5AA5, mrh2.safety_config_checksum);
   EXPECT_EQ(1, mrh2.range_report_format);
-  EXPECT_EQ(1, mrh2.refletivity_report_format);
+  EXPECT_EQ(1, mrh2.reflectivity_report_format);
   EXPECT_EQ(677, mrh2.num_beams);
 }

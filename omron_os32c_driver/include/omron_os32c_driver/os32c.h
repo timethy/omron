@@ -44,8 +44,8 @@ using sensor_msgs::LaserScan;
 using eip::Session;
 using eip::socket::Socket;
 
-#define DEG2RAD(a) (a * M_PI / 180)
-#define RAD2DEG(a) (a * 180 / M_PI)
+#define DEG2RAD(a) (a * M_PI / 180.0)
+#define RAD2DEG(a) (a * 180.0 / M_PI)
 
 namespace omron_os32c_driver {
 
@@ -190,7 +190,7 @@ public:
    */
   static void convertToLaserScan(const MeasurementReport& mr, sensor_msgs::LaserScan* ls);
 
-  void sendMeasurmentReportConfigUDP();
+  void sendMeasurementReportConfigUDP();
 
   MeasurementReport receiveMeasurementReportUDP();
 

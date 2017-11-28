@@ -382,7 +382,7 @@ TEST_F(OS32CTest, test_convert_to_laserscan)
   rr.header.input_status = 0;
   rr.header.display_status = 0x1B1B;
   rr.header.range_report_format = RANGE_MEASURE_50M;
-  rr.header.refletivity_report_format = REFLECTIVITY_MEASURE_TOT_4PS;
+  rr.header.reflectivity_report_format = REFLECTIVITY_MEASURE_TOT_4PS;
   rr.header.num_beams = 10;
   rr.range_data.resize(10);
   rr.range_data[0] = 1000;
@@ -471,7 +471,7 @@ TEST_F(OS32CTest, test_receive_measurement_report)
   EXPECT_EQ(0x3388, data.header.non_safety_config_checksum);
   EXPECT_EQ(0x31AE, data.header.safety_config_checksum);
   EXPECT_EQ(1, data.header.range_report_format);
-  EXPECT_EQ(2, data.header.refletivity_report_format);
+  EXPECT_EQ(2, data.header.reflectivity_report_format);
   EXPECT_EQ(20, data.header.num_beams);
   ASSERT_EQ(20, data.measurement_data.size());
   EXPECT_EQ(0x0852, data.measurement_data[0]);

@@ -64,7 +64,7 @@ TEST_F(RangeAndReflectanceMeasurementTest, test_deserialize)
   mrh.non_safety_config_checksum = 0x55AA;
   mrh.safety_config_checksum = 0x5AA5;
   mrh.range_report_format = 1;
-  mrh.refletivity_report_format = 1;
+  mrh.reflectivity_report_format = 1;
   mrh.num_beams = 1000;
 
   BufferWriter writer(buffer(d));
@@ -100,7 +100,7 @@ TEST_F(RangeAndReflectanceMeasurementTest, test_deserialize)
   EXPECT_EQ(0x55AA, mr.header.non_safety_config_checksum);
   EXPECT_EQ(0x5AA5, mr.header.safety_config_checksum);
   EXPECT_EQ(1, mr.header.range_report_format);
-  EXPECT_EQ(1, mr.header.refletivity_report_format);
+  EXPECT_EQ(1, mr.header.reflectivity_report_format);
   EXPECT_EQ(1000, mr.header.num_beams);
 
   EXPECT_EQ(1000, mr.range_data.size());
@@ -134,7 +134,7 @@ TEST_F(RangeAndReflectanceMeasurementTest, test_serialize)
   mr.header.non_safety_config_checksum = 0x55AA;
   mr.header.safety_config_checksum = 0x5AA5;
   mr.header.range_report_format = 1;
-  mr.header.refletivity_report_format = 1;
+  mr.header.reflectivity_report_format = 1;
   mr.header.num_beams = 1000;
 
   mr.range_data.resize(1000);

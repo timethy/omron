@@ -216,7 +216,7 @@ void OS32C::convertToLaserScan(const MeasurementReport& mr, sensor_msgs::LaserSc
     if (mr.measurement_data[i] == 0x0001)
     {
       // noisy beam detected
-      ls->ranges[i] = 0;
+      ls->ranges[i] = 0.0;
     }
     else if (mr.measurement_data[i] == 0xFFFF)
     {
@@ -225,12 +225,19 @@ void OS32C::convertToLaserScan(const MeasurementReport& mr, sensor_msgs::LaserSc
     }
     else
     {
-      ls->ranges[i] = mr.measurement_data[i] / 1000.0;
+      if (mr.header.range_report_format == RANGE_MEASURE_TOF_4PS) {
+        const static float METER_PER_4PS = 0.001199;
+        const EIP_UINT tof = mr.measurement_data[i]; // x 4ps
+        ls->ranges[i] = METER_PER_4PS * tof;
+      } else
+      {
+        ls->ranges[i] = mr.measurement_data[i] / 1000.0f;
+      }
     }
   }
 }
 
-void OS32C::sendMeasurmentReportConfigUDP()
+void OS32C::sendMeasurementReportConfigUDP()
 {
   // TODO: check that connection is valid
   CPFPacket pkt;

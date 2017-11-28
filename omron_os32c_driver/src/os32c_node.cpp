@@ -74,7 +74,8 @@ int main(int argc, char *argv[])
 
   try
   {
-    os32c.setRangeFormat(RANGE_MEASURE_50M);
+    //os32c.setRangeFormat(RANGE_MEASURE_50M);
+    os32c.setRangeFormat(RANGE_MEASURE_TOF_4PS);
     os32c.setReflectivityFormat(REFLECTIVITY_MEASURE_TOT_4PS);
     os32c.selectBeams(start_angle, end_angle);
   }
@@ -87,7 +88,7 @@ int main(int argc, char *argv[])
   try
   {
     os32c.startUDPIO();
-    os32c.sendMeasurmentReportConfigUDP();
+      os32c.sendMeasurementReportConfigUDP();
   }
   catch (std::logic_error ex)
   {
@@ -106,10 +107,13 @@ int main(int argc, char *argv[])
     {
       // Collect measurement from device, convert to ROS message format.
       MeasurementReport report = os32c.receiveMeasurementReportUDP();
+  
+      const ros::Time t = ros::Time::now();
+      
       OS32C::convertToLaserScan(report, &laserscan_msg);
 
       // Stamp and publish message.
-      laserscan_msg.header.stamp = ros::Time::now();
+      laserscan_msg.header.stamp = t;
       laserscan_msg.header.seq++;
       laserscan_pub.publish(laserscan_msg);
 
@@ -117,7 +121,7 @@ int main(int argc, char *argv[])
       // TODO: Make this time-based instead of message-count based.
       if (++ctr > 10)
       {
-        os32c.sendMeasurmentReportConfigUDP();
+        os32c.sendMeasurementReportConfigUDP();
         ctr = 0;
       }
     }
