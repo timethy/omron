@@ -226,9 +226,9 @@ void OS32C::convertToLaserScan(const MeasurementReport& mr, sensor_msgs::LaserSc
     else
     {
       if (mr.header.range_report_format == RANGE_MEASURE_TOF_4PS) {
-        double static METER_PER_4PS = 0.00119916983;
+        double static METER_PER_8PS = 0.00119916983 * 0.5;
         const EIP_UINT tof = mr.measurement_data[i]; // x 4ps
-        ls->ranges[i] = static_cast<float>(METER_PER_4PS * tof);
+        ls->ranges[i] = static_cast<float>(METER_PER_8PS * tof);
       } else
       {
         ls->ranges[i] = mr.measurement_data[i] / 1000.0f;
