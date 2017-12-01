@@ -173,6 +173,17 @@ public:
    * @param ls Laserscan message to populate.
    */
   void fillLaserScanStaticConfig(sensor_msgs::LaserScan* ls);
+ 
+  /**
+   * Common helper
+   * @param header
+   * @param range_data
+   * @param reflectance_data
+   * @param ls
+   */
+  static void convertToLaserScan(const MeasurementReportHeader& header,
+                                 const vector<EIP_UINT>& range_data,
+                                 sensor_msgs::LaserScan* ls);
 
   /**
    * Helper to convert a Range and Reflectance Measurement to a ROS LaserScan. LaserScan
@@ -193,6 +204,7 @@ public:
   void sendMeasurementReportConfigUDP();
 
   MeasurementReport receiveMeasurementReportUDP();
+  RangeAndReflectanceMeasurement receiveRangeAndReflectanceUDP();
 
   void startUDPIO();
 

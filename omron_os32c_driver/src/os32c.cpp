@@ -159,82 +159,70 @@ void OS32C::fillLaserScanStaticConfig(sensor_msgs::LaserScan* ls)
   ls->range_max = DISTANCE_MAX;
 }
 
-void OS32C::convertToLaserScan(const RangeAndReflectanceMeasurement& rr, sensor_msgs::LaserScan* ls)
-{
-  if (rr.range_data.size() != rr.header.num_beams ||
-    rr.reflectance_data.size() != rr.header.num_beams)
-  {
-    throw std::invalid_argument("Number of beams does not match vector size");
-  }
-
-  // Beam period is in ns
-  ls->time_increment = rr.header.scan_beam_period / 1000000000.0;
-  // Scan period is in microseconds.
-  ls->scan_time = rr.header.scan_rate / 1000000.0;
-
-  // TODO: this currently makes assumptions of the report format. Should likely
-  // accomodate all of them, or at least anything reasonable.
-  ls->ranges.resize(rr.header.num_beams);
-  ls->intensities.resize(rr.header.num_beams);
-  for (int i = 0; i < rr.header.num_beams; ++i)
-  {
-    if (rr.range_data[i] == 0x0001)
-    {
-      // noisy beam detected
-      ls->ranges[i] = 0;
-    }
-    else if (rr.range_data[i] == 0xFFFF)
-    {
-      // no return
-      ls->ranges[i] = DISTANCE_MAX;
-    }
-    else
-    {
-      ls->ranges[i] = rr.range_data[i] / 1000.0;
-    }
-    ls->intensities[i] = rr.reflectance_data[i];
-  }
-}
-
-void OS32C::convertToLaserScan(const MeasurementReport& mr, sensor_msgs::LaserScan* ls)
-{
-  if (mr.measurement_data.size() != mr.header.num_beams)
+void OS32C::convertToLaserScan(const MeasurementReportHeader& header,
+                                 const vector<EIP_UINT>& range_data,
+                                 sensor_msgs::LaserScan* ls) {
+  if (range_data.size() != header.num_beams)
   {
     throw std::invalid_argument("Number of beams does not match vector size");
   }
 
   // Beam period is in ns.
-  ls->time_increment = mr.header.scan_beam_period / 1000000000.0;
+  ls->time_increment = header.scan_beam_period / 1000000000.0f;
   // Scan period is in microseconds.
-  ls->scan_time = mr.header.scan_rate / 1000000.0;
+  ls->scan_time = header.scan_rate / 1000000.0f;
 
   // TODO: this currently makes assumptions of the report format. Should likely
   // accomodate all of them, or at least anything reasonable.
-  ls->ranges.resize(mr.header.num_beams);
-  for (int i = 0; i < mr.header.num_beams; ++i)
+  ls->ranges.resize(header.num_beams);
+  for (int i = 0; i < header.num_beams; ++i)
   {
-    if (mr.measurement_data[i] == 0x0001)
+    if (range_data[i] == 0x0001)
     {
       // noisy beam detected
       ls->ranges[i] = 0.0;
     }
-    else if (mr.measurement_data[i] == 0xFFFF)
+    else if (range_data[i] == 0xFFFF)
     {
       // no return
-      ls->ranges[i] = DISTANCE_MAX;
+      ls->ranges[i] = (float) DISTANCE_MAX;
     }
     else
     {
-      if (mr.header.range_report_format == RANGE_MEASURE_TOF_4PS) {
+      if (header.range_report_format == RANGE_MEASURE_TOF_4PS) {
         double static METER_PER_8PS = 0.00119916983 * 0.5;
-        const EIP_UINT tof = mr.measurement_data[i]; // x 4ps
+        const EIP_UINT tof = range_data[i]; // x 4ps
         ls->ranges[i] = static_cast<float>(METER_PER_8PS * tof);
       } else
       {
-        ls->ranges[i] = mr.measurement_data[i] / 1000.0f;
+        ls->ranges[i] = range_data[i] / 1000.0f;
       }
     }
   }
+}
+
+void OS32C::convertToLaserScan(const RangeAndReflectanceMeasurement& rr, sensor_msgs::LaserScan* ls)
+{
+  // Convert ranges
+  convertToLaserScan(rr.header, rr.range_data, ls);
+  
+  if (rr.reflectance_data.size() != rr.header.num_beams)
+  {
+    throw std::invalid_argument("Number of beams does not match vector size");
+  }
+
+  ls->intensities.resize(rr.header.num_beams);
+  for (int i = 0; i < rr.header.num_beams; ++i)
+  {
+    // Normalize, assume REFLECTIVITY_MEASURE_TOT_ENCODED
+    ls->intensities[i] = rr.reflectance_data[i] / 10000.0f;
+  }
+}
+
+void OS32C::convertToLaserScan(const MeasurementReport& mr, sensor_msgs::LaserScan* ls)
+{
+  // Convert ranges
+  convertToLaserScan(mr.header, mr.measurement_data, ls);
 }
 
 void OS32C::sendMeasurementReportConfigUDP()

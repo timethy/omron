@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
   {
     //os32c.setRangeFormat(RANGE_MEASURE_50M);
     os32c.setRangeFormat(RANGE_MEASURE_TOF_4PS);
-    os32c.setReflectivityFormat(REFLECTIVITY_MEASURE_TOT_4PS);
+    os32c.setReflectivityFormat(REFLECTIVITY_MEASURE_TOT_ENCODED);
     os32c.selectBeams(start_angle, end_angle);
   }
   catch (std::invalid_argument ex)
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
     ROS_FATAL_STREAM("Invalid arguments in sensor configuration: " << ex.what());
     return -1;
   }
-
+/*
   try
   {
     os32c.startUDPIO();
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
   {
     ROS_FATAL_STREAM("Could not start UDP IO: " << ex.what());
     return -1;
-  }
+  }*/
 
   int ctr = 10;
   sensor_msgs::LaserScan laserscan_msg;
@@ -106,17 +106,19 @@ int main(int argc, char *argv[])
     try
     {
       // Collect measurement from device, convert to ROS message format.
-      MeasurementReport report = os32c.receiveMeasurementReportUDP();
+      //MeasurementReport report = os32c.receiveMeasurementReportUDP();
+      RangeAndReflectanceMeasurement rr = os32c.getSingleRRScan();
   
       const ros::Time t = ros::Time::now();
       
-      OS32C::convertToLaserScan(report, &laserscan_msg);
+      OS32C::convertToLaserScan(rr, &laserscan_msg);
 
       // Stamp and publish message.
       laserscan_msg.header.stamp = t;
       laserscan_msg.header.seq++;
       laserscan_pub.publish(laserscan_msg);
 
+/*
       // Every tenth message received, send the keepalive message in response.
       // TODO: Make this time-based instead of message-count based.
       if (++ctr > 10)
@@ -124,6 +126,7 @@ int main(int argc, char *argv[])
         os32c.sendMeasurementReportConfigUDP();
         ctr = 0;
       }
+      */
     }
     catch (std::runtime_error ex)
     {
