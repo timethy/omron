@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
   {
     os32c.open(host);
   }
-  catch (std::runtime_error ex)
+  catch (std::runtime_error& ex)
   {
     ROS_FATAL_STREAM("Exception caught opening session: " << ex.what());
     return -1;
@@ -74,12 +74,12 @@ int main(int argc, char *argv[])
 
   try
   {
-    //os32c.setRangeFormat(RANGE_MEASURE_50M);
+    // Default to RANGE_MEASURE_TOF_4PS since it should be slightly more accurate (RANGE_MEASURE_50M should work as well)
     os32c.setRangeFormat(RANGE_MEASURE_TOF_4PS);
     os32c.setReflectivityFormat(REFLECTIVITY_MEASURE_TOT_ENCODED);
     os32c.selectBeams(start_angle, end_angle);
   }
-  catch (std::invalid_argument ex)
+  catch (std::invalid_argument& ex)
   {
     ROS_FATAL_STREAM("Invalid arguments in sensor configuration: " << ex.what());
     return -1;
@@ -128,11 +128,11 @@ int main(int argc, char *argv[])
       }
       */
     }
-    catch (std::runtime_error ex)
+    catch (std::runtime_error& ex)
     {
       ROS_ERROR_STREAM("Exception caught requesting scan data: " << ex.what());
     }
-    catch (std::logic_error ex)
+    catch (std::logic_error& ex)
     {
       ROS_ERROR_STREAM("Problem parsing return data: " << ex.what());
     }
