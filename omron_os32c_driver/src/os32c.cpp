@@ -97,8 +97,8 @@ void OS32C::calcBeamMask(double start_angle, double end_angle, EIP_BYTE mask[])
     throw std::invalid_argument("Starting angle is less than ending angle");
   }
 
-  int start_beam = calcBeamNumber(start_angle);
-  int end_beam = calcBeamNumber(end_angle);
+  int start_beam = 0; //calcBeamNumber(start_angle);
+  int end_beam = 676; //calcBeamNumber(end_angle);
   start_angle_ = calcBeamCentre(start_beam);
   end_angle_ = calcBeamCentre(end_beam);
 
